@@ -413,9 +413,11 @@
 
 
       if (error) {
-
-        loginMessage.textContent =
-          "로그인 실패: 이메일 또는 비밀번호를 확인하세요.";
+  result.textContent =
+    "로그인 실패: " + error.message;
+  console.error(error);
+  return;
+      }
 
         return;
       }
