@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>청라삼데스 관리자</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Arial,
+        "Noto Sans KR",
+        sans-serif;
+
+      background: #f4f6fa;
+      color: #101b3d;
+    }
+
+    header {
+      background: #071a52;
+      color: white;
+      padding: 22px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      opacity: 0.8;
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 18px;
+    }
+
+    .box {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      margin-top: 8px;
+      margin-bottom: 14px;
+
+      border: 1px solid #d8dce5;
+      border-radius: 8px;
+
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+
+      padding: 12px 18px;
+
+      background: #d90818;
+      color: white;
+
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button.secondary {
+      background: #071a52;
+    }
+
+    button.delete {
+      background: #777;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .wiki-item,
+    .application-item {
+      border: 1px solid #e0e4eb;
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 12px;
+    }
+
+    .wiki-item h3,
+    .application-item h3 {
+      margin-top: 0;
+    }
+
+    .application-item p {
+      margin: 7px 0;
+      line-height: 1.5;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        margin-top: 18px;
+      }
+
+      .box {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>청라삼데스 관리자</h1>
+  <p>CHEONGNA SAMDEATH BASEBALL CLUB</p>
+</header>
+
+
+<main>
+
+  <!-- 로그인 -->
+  <section
+    id="login-section"
+    class="box"
+  >
+
+    <h2>관리자 로그인</h2>
+
+    <form id="login-form">
+
+      <label for="email">
+        관리자 이메일
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="관리자 이메일"
+        required
+      >
+
+
+      <label for="password">
+        비밀번호
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="관리자 비밀번호"
+        required
+      >
+
+      <button type="submit">
+        로그인
+      </button>
+
+    </form>
+
+    <div
+      id="login-message"
+      class="message"
+    ></div>
+
+  </section>
+
+
+  <!-- 관리자 화면 -->
+  <section
+    id="admin-section"
+    class="hidden"
+  >
+
+    <!-- 관리자 상단 -->
+    <div class="box">
+
+      <h2>관리자 메뉴</h2>
+
+      <div class="top-buttons">
+
+        <button
+          id="logout-button"
+          class="secondary"
+        >
+          로그아웃
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- 위키 관리 -->
+    <div class="box">
+
+      <h2>위키 관리</h2>
+
+      <form id="wiki-form">
+
+        <input
+          type="hidden"
+          id="wiki-id"
+        >
+
+        <label>
+          제목
+        </label>
+
+        <input
+          id="wiki-title"
+          placeholder="예: 청라삼데스는?"
+          required
+        >
+
+        <label>
+          내용
+        </label>
+
+        <textarea
+          id="wiki-content"
+          placeholder="위키 내용을 입력하세요."
+          required
+        ></textarea>
+
+        <label>
+          순서
+        </label>
+
+        <input
+          id="wiki-sort"
+          type="number"
+          value="1"
+        >
+
+        <div class="top-buttons">
+
+          <button type="submit">
+            위키 저장
+          </button>
+
+          <button
+            type="button"
+            id="wiki-cancel"
+            class="secondary"
+          >
+            새로 작성
+          </button>
+
+        </div>
+
+      </form>
+
+      <div
+        id="wiki-message"
+        class="message"
+      ></div>
+
+      <div id="wiki-admin-list"></div>
+
+    </div>
+
+
+    <!-- 지원서 관리 -->
+    <div class="box">
+
+      <h2>입단 지원서</h2>
+
+      <div
+        id="applications-list"
+      >
+        지원서를 불러오는 중...
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script type="module">
+
+  import {
+    createClient
+  } from
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+  const SUPABASE_URL =
+    "https://bhykntnqofpuwesnpbv.supabase.co";
+
+
+  const SUPABASE_ANON_KEY =
+  "sb_publishable_sb_publishable_Yzf8Zkskk0lTq1wGiWAFOg_9E_iShgP";
+
+
+  const supabase =
+    createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+  const loginSection =
+    document.getElementById(
+      "login-section"
+    );
+
+  const adminSection =
+    document.getElementById(
+      "admin-section"
+    );
+
+
+  const loginForm =
+    document.getElementById(
+      "login-form"
+    );
+
+
+  const loginMessage =
+    document.getElementById(
+      "login-message"
+    );
+
+
+  const logoutButton =
+    document.getElementById(
+      "logout-button"
+    );
+
+
+  // 로그인
+  loginForm.addEventListener(
+    "submit",
+    async (event) => {
+
+      event.preventDefault();
+
+
+      const email =
+        document.getElementById(
+          "email"
+        ).value.trim();
+
+
+      const password =
+        document.getElementById(
+          "password"
+        ).value;
+
+
+      loginMessage.textContent =
+        "로그인 중...";
+
+
+      const {
+        error
+      } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+
+      if (error) {
+
+        loginMessage.textContent =
+          "로그인 실패: 이메일 또는 비밀번호를 확인하세요.";
+
+        return;
+      }
+
+
+      loginMessage.textContent =
+        "";
+
+      showAdmin();
+    }
+  );
+
+
+  // 관리자 화면
+  async function showAdmin() {
+
+    const {
+      data
+    } =
+      await supabase.auth.getSession();
+
+
+    if (!data.session) {
+
+      loginSection.classList.remove(
+        "hidden"
+      );
+
+      adminSection.classList.add(
+        "hidden"
+      );
+
+      return;
+    }
+
+
+    loginSection.classList.add(
+      "hidden"
+    );
+
+    adminSection.classList.remove(
+      "hidden"
+    );
+
+
+    loadWiki();
+
+    loadApplications();
+  }
+
+
+  // 로그아웃
+  logoutButton.addEventListener(
+    "click",
+    async () => {
+
+      await supabase.auth.signOut();
+
+      showAdmin();
+    }
+  );
+
+
+  // 위키 불러오기
+  async function loadWiki() {
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+        .from("wiki")
+        .select("*")
+        .order(
+          "sort_order",
+          {
+            ascending: true
+          }
+        );
+
+
+    const list =
+      document.getElementById(
+        "wiki-admin-list"
+      );
+
+
+    if (error) {
+
+      list.innerHTML =
+        "<p>위키를 불러오지 못했습니다.</p>";
+
+      return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    data.forEach(
+      (item) => {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "wiki-item";
+
+
+        div.innerHTML = `
+          <h3>${escapeHtml(item.title)}</h3>
+
+          <p>
+            ${escapeHtml(item.content)}
+          </p>
+
+          <div class="top-buttons">
+
+            <button
+              class="edit-wiki secondary"
+              data-id="${item.id}"
+            >
+              수정
+            </button>
+
+            <button
+              class="delete-wiki delete"
+              data-id="${item.id}"
+            >
+              삭제
+            </button>
+
+          </div>
+        `;
+
+
+        list.appendChild(div);
+      }
+    );
+
+
+    document
+      .querySelectorAll(".edit-wiki")
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const item =
+                data.find(
+                  (x) =>
+                    String(x.id) ===
+                    String(button.dataset.id)
+                );
+
+
+              if (!item) return;
+
+
+              document.getElementById(
+                "wiki-id"
+              ).value = item.id;
+
+
+              document.getElementById(
+                "wiki-title"
+              ).value = item.title;
+
+
+              document.getElementById(
+                "wiki-content"
+              ).value = item.content;
+
+
+              document.getElementById(
+                "wiki-sort"
+              ).value =
+                item.sort_order || 1;
+
+
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+              });
+            }
+          );
+        }
+      );
+
+
+    document
+      .querySelectorAll(".delete-wiki")
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            async () => {
+
+              if (
+                !confirm(
+                  "이 위키를 삭제하시겠습니까?"
+                )
+              ) {
+                return;
+              }
+
+
+              const {
+                error
+              } =
+                await supabase
+                  .from("wiki")
+                  .delete()
+                  .eq(
+                    "id",
+                    button.dataset.id
+                  );
+
+
+              if (error) {
+
+                alert(
+                  "삭제에 실패했습니다."
+                );
+
+                return;
+              }
+
+
+              loadWiki();
+            }
+          );
+        }
+      );
+
+  }
+
+
+  // 위키 저장
+  document
+    .getElementById("wiki-form")
+    .addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+
+        const id =
+          document.getElementById(
+            "wiki-id"
+          ).value;
+
+
+        const title =
+          document.getElementById(
+            "wiki-title"
+          ).value.trim();
+
+
+        const content =
+          document.getElementById(
+            "wiki-content"
+          ).value.trim();
+
+
+        const sort =
+          Number(
+            document.getElementById(
+              "wiki-sort"
+            ).value
+          );
+
+
+        let result;
+
+
+        if (id) {
+
+          result =
+            await supabase
+              .from("wiki")
+              .update({
+                title,
+                content,
+                sort_order: sort,
+                updated_at:
+                  new Date().toISOString()
+              })
+              .eq(
+                "id",
+                id
+              );
+
+        } else {
+
+          result =
+            await supabase
+              .from("wiki")
+              .insert({
+                title,
+                content,
+                sort_order: sort
+              });
+
+        }
+
+
+        if (result.error) {
+
+          document.getElementById(
+            "wiki-message"
+          ).textContent =
+            "저장에 실패했습니다.";
+
+          return;
+        }
+
+
+        document.getElementById(
+          "wiki-message"
+        ).textContent =
+          "저장되었습니다.";
+
+
+        document.getElementById(
+          "wiki-form"
+        ).reset();
+
+
+        document.getElementById(
+          "wiki-id"
+        ).value = "";
+
+
+        loadWiki();
+      }
+    );
+
+
+  // 새로 작성
+  document
+    .getElementById("wiki-cancel")
+    .addEventListener(
+      "click",
+      () => {
+
+        document
+          .getElementById("wiki-form")
+          .reset();
+
+        document.getElementById(
+          "wiki-id"
+        ).value = "";
+
+      }
+    );
+
+
+  // 지원서 불러오기
+  async function loadApplications() {
+
+    const list =
+      document.getElementById(
+        "applications-list"
+      );
+
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+        .from("applications")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+
+      list.innerHTML =
+        "<p>지원서를 불러오지 못했습니다.</p>";
+
+      return;
+    }
+
+
+    if (!data.length) {
+
+      list.innerHTML =
+        "<p>아직 접수된 지원서가 없습니다.</p>";
+
+      return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    data.forEach(
+      (item) => {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "application-item";
+
+
+        div.innerHTML = `
+          <h3>
+            ${escapeHtml(item.name)}
+          </h3>
+
+          <p>
+            <strong>학년:</strong>
+            ${escapeHtml(item.grade || "")}
+          </p>
+
+          <p>
+            <strong>연락처:</strong>
+            ${escapeHtml(item.phone || "")}
+          </p>
+
+          <p>
+            <strong>희망 포지션:</strong>
+            ${escapeHtml(item.position || "")}
+          </p>
+
+          <p>
+            <strong>야구 경력:</strong>
+            ${escapeHtml(item.experience || "")}
+          </p>
+
+          <p>
+            <strong>지원동기:</strong>
+            ${escapeHtml(item.motivation || "")}
+          </p>
+
+          <p>
+            <strong>접수일:</strong>
+            ${new Date(item.created_at).toLocaleString("ko-KR")}
+          </p>
+        `;
+
+
+        list.appendChild(div);
+
+      }
+    );
+
+  }
+
+
+  // HTML 문자 보호
+  function escapeHtml(value) {
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  // 페이지 처음 열었을 때
+  showAdmin();
+
+</script>
+
+</body>
+</html>
