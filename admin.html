@@ -165,53 +165,7 @@
 </header>
 
 
-<main>
 
-// 로그인
-loginForm.addEventListener(
-  "submit",
-  async (event) => {
-
-    event.preventDefault();
-
-    const email =
-      document.getElementById("email")
-        .value
-        .trim();
-
-    const password =
-      document.getElementById("password")
-        .value;
-
-    loginMessage.textContent =
-      "로그인 중...";
-
-    try {
-
-      const {
-        data,
-        error
-      } =
-        await supabase.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-      if (error) {
-
-        console.error(
-          "Supabase 로그인 오류:",
-          error
-        );
-
-        loginMessage.textContent =
-          "로그인 실패: " +
-          error.message;
-
-        return;
-      }
-
-      if (!data.session) {
 
         loginMessage.textContent =
           "로그인 세션을 만들지 못했습니다.";
@@ -332,112 +286,6 @@ loginForm.addEventListener(
     </div>
 
 
-    <!-- 지원서 관리 -->
-    <div class="box">
-
-      <h2>입단 지원서</h2>
-
-      <div
-        id="applications-list"
-      >
-        지원서를 불러오는 중...
-      </div>
-
-    </div>
-
-  </section>
-
-</main>
-
-
-<script type="module">
-
-  import {
-    createClient
-  } from
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-
-  const SUPABASE_URL =
-    "https://bhykntnqofpuwesnpbv.supabase.co";
-
-
-  const SUPABASE_ANON_KEY =
-  "sb_publishable_Yzf8Zkskk0lTq1wGiWAFOg_9E_iShgP";
-
-
-  const supabase =
-    createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-
-  const loginSection =
-    document.getElementById(
-      "login-section"
-    );
-
-  const adminSection =
-    document.getElementById(
-      "admin-section"
-    );
-
-
-  const loginForm =
-    document.getElementById(
-      "login-form"
-    );
-
-
-  const loginMessage =
-    document.getElementById(
-      "login-message"
-    );
-
-
-  const logoutButton =
-    document.getElementById(
-      "logout-button"
-    );
-
-
-  // 로그인
-  loginForm.addEventListener(
-    "submit",
-    async (event) => {
-
-      event.preventDefault();
-
-
-      const email =
-        document.getElementById(
-          "email"
-        ).value.trim();
-
-
-      const password =
-        document.getElementById(
-          "password"
-        ).value;
-
-
-      loginMessage.textContent =
-        "로그인 중...";
-
-
-      const {
-        error
-      } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-
-
-      if (error) {
-  result.textContent =
-    "로그인 실패: " + error.message;
   console.error(error);
   return;
       }
@@ -817,111 +665,311 @@ loginForm.addEventListener(
     const {
       data,
       error
-    } =
-      await supabase
-        .from("applications")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
+<main>
+
+  <!-- 관리자 로그인 -->
+  <section id="login-section" class="box">
+
+    <h2>관리자 로그인</h2>
+
+    <form id="login-form">
+
+      <label for="email">
+        관리자 이메일
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="관리자 이메일"
+        required
+      >
+
+      <label for="password">
+        비밀번호
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="관리자 비밀번호"
+        required
+      >
+
+      <button type="submit">
+        로그인
+      </button>
+
+    </form>
+
+    <div
+      id="login-message"
+      class="message"
+    ></div>
+
+  </section>
+
+
+  <!-- 관리자 화면 -->
+  <section
+    id="admin-section"
+    class="hidden"
+  >
+
+    <div class="box">
+
+      <h2>관리자 메뉴</h2>
+
+      <button
+        id="logout-button"
+        class="secondary"
+      >
+        로그아웃
+      </button>
+
+    </div>
+
+
+    <!-- 위키 -->
+    <div class="box">
+
+      <h2>위키 관리</h2>
+
+      <form id="wiki-form">
+
+        <input
+          type="hidden"
+          id="wiki-id"
+        >
+
+        <label>
+          제목
+        </label>
+
+        <input
+          id="wiki-title"
+          placeholder="예: 청라삼데스는?"
+          required
+        >
+
+        <label>
+          내용
+        </label>
+
+        <textarea
+          id="wiki-content"
+          placeholder="위키 내용을 입력하세요."
+          required
+        ></textarea>
+
+        <label>
+          순서
+        </label>
+
+        <input
+          id="wiki-sort"
+          type="number"
+          value="1"
+        >
+
+        <button type="submit">
+          위키 저장
+        </button>
+
+      </form>
+
+      <div
+        id="wiki-message"
+        class="message"
+      ></div>
+
+      <div id="wiki-admin-list"></div>
+
+    </div>
+
+
+    <!-- 지원서 -->
+    <div class="box">
+
+      <h2>입단 지원서</h2>
+
+      <div id="applications-list">
+        지원서를 불러오는 중...
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script type="module">
+
+  import {
+    createClient
+  } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+  const SUPABASE_URL =
+    "https://bhykntnqofpuwesnpbv.supabase.co";
+
+
+  const SUPABASE_ANON_KEY =
+    "여기에_실제키";
+
+
+  const supabase =
+    createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+  const loginForm =
+    document.getElementById(
+      "login-form"
+    );
+
+
+  const loginMessage =
+    document.getElementById(
+      "login-message"
+    );
+
+
+  const loginSection =
+    document.getElementById(
+      "login-section"
+    );
+
+
+  const adminSection =
+    document.getElementById(
+      "admin-section"
+    );
+
+
+  const logoutButton =
+    document.getElementById(
+      "logout-button"
+    );
+
+
+  // 로그인
+  loginForm.addEventListener(
+    "submit",
+    async (event) => {
+
+      event.preventDefault();
+
+
+      const email =
+        document.getElementById(
+          "email"
+        ).value.trim();
+
+
+      const password =
+        document.getElementById(
+          "password"
+        ).value;
+
+
+      loginMessage.textContent =
+        "로그인 중...";
+
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+
+        if (error) {
+
+          console.error(
+            "Supabase 로그인 오류:",
+            error
+          );
+
+          loginMessage.textContent =
+            "로그인 실패: " +
+            error.message;
+
+          return;
+        }
+
+
+        if (!data.session) {
+
+          loginMessage.textContent =
+            "로그인 세션을 만들지 못했습니다.";
+
+          return;
+        }
+
+
+        loginMessage.textContent =
+          "로그인 성공!";
+
+
+        loginSection.classList.add(
+          "hidden"
         );
 
 
-    if (error) {
+        adminSection.classList.remove(
+          "hidden"
+        );
 
-      list.innerHTML =
-        "<p>지원서를 불러오지 못했습니다.</p>";
+      } catch (error) {
 
-      return;
-    }
+        console.error(
+          "로그인 오류:",
+          error
+        );
 
-
-    if (!data.length) {
-
-      list.innerHTML =
-        "<p>아직 접수된 지원서가 없습니다.</p>";
-
-      return;
-    }
-
-
-    list.innerHTML = "";
-
-
-    data.forEach(
-      (item) => {
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-
-        div.className =
-          "application-item";
-
-
-        div.innerHTML = `
-          <h3>
-            ${escapeHtml(item.name)}
-          </h3>
-
-          <p>
-            <strong>학년:</strong>
-            ${escapeHtml(item.grade || "")}
-          </p>
-
-          <p>
-            <strong>연락처:</strong>
-            ${escapeHtml(item.phone || "")}
-          </p>
-
-          <p>
-            <strong>희망 포지션:</strong>
-            ${escapeHtml(item.position || "")}
-          </p>
-
-          <p>
-            <strong>야구 경력:</strong>
-            ${escapeHtml(item.experience || "")}
-          </p>
-
-          <p>
-            <strong>지원동기:</strong>
-            ${escapeHtml(item.motivation || "")}
-          </p>
-
-          <p>
-            <strong>접수일:</strong>
-            ${new Date(item.created_at).toLocaleString("ko-KR")}
-          </p>
-        `;
-
-
-        list.appendChild(div);
+        loginMessage.textContent =
+          "오류: " +
+          error.message;
 
       }
-    );
 
-  }
-
-
-  // HTML 문자 보호
-  function escapeHtml(value) {
-
-    return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
+    }
+  );
 
 
-  // 페이지 처음 열었을 때
-  showAdmin();
+  // 로그아웃
+  logoutButton.addEventListener(
+    "click",
+    async () => {
+
+      await supabase.auth.signOut();
+
+
+      adminSection.classList.add(
+        "hidden"
+      );
+
+
+      loginSection.classList.remove(
+        "hidden"
+      );
+
+
+      loginMessage.textContent =
+        "";
+
+    }
+  );
+
 
 </script>
 
