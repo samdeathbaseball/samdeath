@@ -167,53 +167,76 @@
 
 <main>
 
-  <!-- 로그인 -->
-  <section
-    id="login-section"
-    class="box"
-  >
+// 로그인
+loginForm.addEventListener(
+  "submit",
+  async (event) => {
 
-    <h2>관리자 로그인</h2>
+    event.preventDefault();
 
-    <form id="login-form">
+    const email =
+      document.getElementById("email")
+        .value
+        .trim();
 
-      <label for="email">
-        관리자 이메일
-      </label>
+    const password =
+      document.getElementById("password")
+        .value;
 
-      <input
-        id="email"
-        type="email"
-        placeholder="관리자 이메일"
-        required
-      >
+    loginMessage.textContent =
+      "로그인 중...";
 
+    try {
 
-      <label for="password">
-        비밀번호
-      </label>
+      const {
+        data,
+        error
+      } =
+        await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
 
-      <input
-        id="password"
-        type="password"
-        placeholder="관리자 비밀번호"
-        required
-      >
+      if (error) {
 
-      <button type="submit">
-        로그인
-      </button>
+        console.error(
+          "Supabase 로그인 오류:",
+          error
+        );
 
-    </form>
+        loginMessage.textContent =
+          "로그인 실패: " +
+          error.message;
 
-    <div
-      id="login-message"
-      class="message"
-    ></div>
+        return;
+      }
 
-  </section>
+      if (!data.session) {
 
+        loginMessage.textContent =
+          "로그인 세션을 만들지 못했습니다.";
 
+        return;
+      }
+
+      loginMessage.textContent =
+        "로그인 성공!";
+
+      showAdmin();
+
+    } catch (error) {
+
+      console.error(
+        "로그인 예외:",
+        error
+      );
+
+      loginMessage.textContent =
+        "오류가 발생했습니다: " +
+        error.message;
+    }
+  }
+);
   <!-- 관리자 화면 -->
   <section
     id="admin-section"
